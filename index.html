@@ -48,6 +48,118 @@
             transition: height 1s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
+        /* Hiệu ứng hào quang vương miện */
+        @keyframes halo-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 2px rgba(250, 204, 21, 0.6)) drop-shadow(0 0 6px rgba(250, 204, 21, 0.3));
+                transform: scale(1) translateY(0);
+            }
+            50% {
+                filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.9)) drop-shadow(0 0 15px rgba(250, 204, 21, 0.5));
+                transform: scale(1.1) translateY(-2px);
+            }
+        }
+        .crown-glow {
+            animation: halo-glow 2s infinite ease-in-out;
+            display: inline-flex;
+        }
+        .crown-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            border: 1px solid rgba(250, 204, 21, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes crown-ripple {
+            0% {
+                width: 14px;
+                height: 14px;
+                opacity: 1;
+            }
+            100% {
+                width: 152px;
+                height: 152px;
+                opacity: 0;
+            }
+        }
+        .ring-1 {
+            animation: crown-ripple 1.8s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+        .ring-2 {
+            animation: crown-ripple 1.8s infinite cubic-bezier(0.1, 0.8, 0.3, 1) 0.6s;
+        }
+        .ring-3 {
+            animation: crown-ripple 1.8s infinite cubic-bezier(0.1, 0.8, 0.3, 1) 1.2s;
+        }
+
+        /* Hiệu ứng bốc mùi icon shit */
+        .smelly-container {
+            display: inline-flex;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+        }
+        .smelly-smoke {
+            position: absolute;
+            color: #84cc16; /* lime-500 */
+            font-size: 9px;
+            font-weight: bold;
+            opacity: 0;
+            bottom: 12px;
+            filter: blur(0.2px);
+            pointer-events: none;
+            user-select: none;
+        }
+        @keyframes stink-rise-1 {
+            0% {
+                transform: translateY(0) translateX(0) scale(0.7) rotate(0deg);
+                opacity: 0;
+            }
+            40% {
+                opacity: 0.7;
+            }
+            80% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-15px) translateX(3px) scale(1.2) rotate(15deg);
+                opacity: 0;
+            }
+        }
+        @keyframes stink-rise-2 {
+            0% {
+                transform: translateY(0) translateX(0) scale(0.7) rotate(0deg);
+                opacity: 0;
+            }
+            40% {
+                opacity: 0.7;
+            }
+            80% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-18px) translateX(-4px) scale(1.1) rotate(-15deg);
+                opacity: 0;
+            }
+        }
+        .wave-1 {
+            left: 2px;
+            animation: stink-rise-1 1.8s infinite linear;
+        }
+        .wave-2 {
+            left: 8px;
+            animation: stink-rise-2 2.2s infinite linear 0.5s;
+        }
+        .wave-3 {
+            left: 14px;
+            animation: stink-rise-1 2s infinite linear 1s;
+        }
+
         /* Tối ưu cho bàn phím số iPhone */
         input[type="text"] {
             font-size: 18px !important;
@@ -501,13 +613,25 @@
             const sorted = [...totals].sort((a,b) => b.total - a.total);
             const topId = sorted[0].total > 0 ? sorted[0].id : null;
             const bottomIds = sorted.slice(-2).map(x => x.id);
+            const poopIcon = `
+                <div class="smelly-container mb-1">
+                    <span class="text-lg animate-bounce inline-block">💩</span>
+                    <span class="smelly-smoke wave-1">~</span>
+                    <span class="smelly-smoke wave-2">~</span>
+                    <span class="smelly-smoke wave-3">~</span>
+                </div>`;
+            const crownIcon = `
+                <div class="crown-glow mb-1 relative w-6 h-6 flex items-center justify-center">
+                    <div class="crown-ring ring-1"></div>
+                    <div class="crown-ring ring-2"></div>
+                    <div class="crown-ring ring-3"></div>
+                    <i data-lucide="crown" class="w-4 h-4 text-yellow-500 fill-yellow-500 relative z-10 animate-bounce"></i>
+                </div>`;
             container.innerHTML = totals.map(p => {
                 const isPos = p.total >= 0;
                 const h = (Math.abs(p.total) / maxVal) * 100;
                 const isTop = p.id === topId;
                 const isBottom = bottomIds.includes(p.id) && totals.length >= 3;
-                const poopIcon = '<span class="text-lg mb-1">💩</span>';
-                const crownIcon = '<i data-lucide="crown" class="w-4 h-4 text-yellow-500 mb-1 fill-yellow-500 animate-bounce"></i>';
                 return `
                 <div class="flex-1 flex flex-col items-center relative h-full overflow-visible px-0.5">
                     <div class="flex-1 w-full flex flex-col justify-end items-center relative overflow-visible">
