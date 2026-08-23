@@ -420,6 +420,12 @@
                 renderPlayersList();
                 updateSaveButton();
                 showNotice("Đã tính điểm Ăn Sâm", "success");
+            } else if (type === 'CHAY') {
+                currentScores[id] = -15;
+                isTotalCalculated = false;
+                renderPlayersList();
+                updateSaveButton();
+                showNotice("Đã tính Cháy (-15 lá)", "success");
             } else {
                 actionWinnerId = id;
                 currentActionType = type;
@@ -592,10 +598,11 @@
                             <span class="text-[8px] font-black text-emerald-600 dark:text-emerald-400 leading-tight">${winRate}% thắng</span>
                         </div>
                     </div>
-                    <div class="flex gap-1 flex-[2.2]">
-                        <button onclick="quickAction('${p.id}', 'AN_SAM')" class="h-10 flex-1 rounded-xl text-[9px] font-black uppercase border transition-all bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900/30 flex items-center justify-center whitespace-nowrap px-1">Ăn sâm</button>
-                        <button onclick="quickAction('${p.id}', 'CHAT_2')" class="h-10 flex-1 rounded-xl text-[9px] font-black uppercase border transition-all bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-900/20 flex items-center justify-center whitespace-nowrap px-1">Chặt 2</button>
-                        <button onclick="quickAction('${p.id}', 'CHAT_SAM')" class="h-10 flex-1 rounded-xl text-[9px] font-black uppercase border transition-all bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30 flex items-center justify-center whitespace-nowrap px-1">Bắt sâm</button>
+                    <div class="flex gap-1 flex-[2.8]">
+                        <button onclick="quickAction('${p.id}', 'AN_SAM')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900/30 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Ăn sâm</button>
+                        <button onclick="quickAction('${p.id}', 'CHAT_2')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-900/20 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Chặt 2</button>
+                        <button onclick="quickAction('${p.id}', 'CHAT_SAM')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Bắt sâm</button>
+                        <button onclick="quickAction('${p.id}', 'CHAY')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all ${score === -15 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30'} flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Cháy</button>
                     </div>
                     <input type="text" id="score-input-${idx}" inputmode="numeric" onkeydown="handleScoreKeyDown(event, ${idx})" oninput="handleScoreChange('${p.id}', this.value)" value="${score !== undefined ? score : ''}" class="w-14 h-11 text-center font-black rounded-xl border-2 outline-none text-sm transition-all flex-shrink-0 ${scoreClass}" placeholder="0">
                 </div>`;
