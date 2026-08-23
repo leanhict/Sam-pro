@@ -89,16 +89,50 @@ function handleScoreKeyDown(e, idx) {
     }
 }
 
-function handleScoreChange(id, val) {
+function updateInputStyle(inputEl, score) {
+    if (!inputEl) return;
+    const baseClass = "w-14 h-11 text-center font-black rounded-xl border-2 outline-none text-sm transition-all flex-shrink-0";
+    let scoreClass = 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300';
+    if (score !== undefined && score !== null && !isNaN(score)) {
+        if (score > 0) {
+            scoreClass = 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-400 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400';
+        } else if (score < 0) {
+            scoreClass = 'bg-rose-50 dark:bg-rose-900/10 border-rose-400 dark:border-rose-500/30 text-rose-700 dark:text-rose-400';
+        }
+    }
+    inputEl.className = `${baseClass} ${scoreClass}`;
+}
+
+function handleScoreChange(id, val, inputEl) {
     isTotalCalculated = false;
-    const clean = val.replace(/[^0-9-]/g, '');
-    if (!clean || clean === '-') {
+    const clean = val.replace(/[^0-9+-]/g, '');
+    if (!clean || clean === '-' || clean === '+') {
         delete currentScores[id];
     } else {
-        const num = parseInt(clean);
-        currentScores[id] = (num > 0 && !val.includes('-')) ? -num : num;
+        const num = parseInt(clean, 10);
+        if (isNaN(num)) {
+            delete currentScores[id];
+        } else {
+            if (val.includes('+')) {
+                currentScores[id] = Math.abs(num);
+            } else if (val.includes('-')) {
+                currentScores[id] = -Math.abs(num);
+            } else {
+                currentScores[id] = num === 0 ? 0 : -Math.abs(num);
+            }
+        }
     }
-    renderPlayersList();
+    
+    if (inputEl) {
+        updateInputStyle(inputEl, currentScores[id]);
+    }
+    
+    const chayBtn = document.getElementById(`chay-btn-${id}`);
+    if (chayBtn) {
+        const isChay = currentScores[id] === -15;
+        chayBtn.className = `h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all ${isChay ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30'} flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95`;
+    }
+
     updateSaveButton();
 }
 
@@ -112,7 +146,12 @@ function calculateTotalLeaves() {
     const winnerId = missing[0].id;
     let total = 0;
     players.forEach(p => { 
-        if (p.id !== winnerId) total += Math.abs(currentScores[p.id] || 0); 
+        if (p.id !== winnerId) {
+            const s = currentScores[p.id] || 0;
+            const penalty = s > 0 ? -s : s;
+            currentScores[p.id] = penalty;
+            total += Math.abs(penalty);
+        }
     });
     if (total === 0) { 
         showNotice("Nhập lá phạt trước!", "warning"); 
@@ -292,10 +331,6 @@ function renderAll() {
 }
 
 function renderPlayersList() {
-    const activeId = document.activeElement ? document.activeElement.id : null;
-    const selectionStart = document.activeElement ? document.activeElement.selectionStart : null;
-    const selectionEnd = document.activeElement ? document.activeElement.selectionEnd : null;
-
     const list = document.getElementById('players-list');
     list.innerHTML = players.map((p, idx) => {
         const score = currentScores[p.id];
@@ -305,41 +340,27 @@ function renderPlayersList() {
                 ? 'bg-rose-50 dark:bg-rose-900/10 border-rose-400 dark:border-rose-500/30 text-rose-700 dark:text-rose-400' 
                 : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-600 dark:text-slate-300');
         
-        const totalRounds = rounds.length;
         const wins = rounds.filter(r => (r.scores[p.id] || 0) > 0).length;
-        const winRate = totalRounds > 0 ? Math.round((wins / totalRounds) * 100) : 0;
         
         return `
         <div class="flex items-center gap-1.5 p-1 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/60 dark:border-slate-800 transition-all h-16">
-            <div class="flex items-center gap-1 flex-[0.8] min-w-0">
-                <div class="w-6 h-6 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-indigo-600 dark:text-indigo-300 rounded-lg flex items-center justify-center font-black text-[9px] uppercase shadow-sm flex-shrink-0">${p.name.charAt(0)}</div>
-                <div class="flex flex-col min-w-0">
-                    <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 truncate leading-tight">${p.name}</span>
-                    <span class="text-[8px] font-black text-emerald-600 dark:text-emerald-400 leading-tight">${winRate}% thắng</span>
+            <div class="flex items-center gap-2 flex-[0.85] min-w-0">
+                <div class="relative flex-shrink-0">
+                    <div class="w-7 h-7 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-indigo-600 dark:text-indigo-300 rounded-lg flex items-center justify-center font-black text-xs uppercase shadow-sm">${p.name.charAt(0)}</div>
+                    <span class="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 bg-rose-500 text-white rounded-full text-[9px] font-black flex items-center justify-center border-2 border-white dark:border-slate-800 shadow-sm leading-none z-10">${wins}</span>
                 </div>
+                <span class="text-[12px] font-bold text-slate-700 dark:text-slate-200 truncate">${p.name}</span>
             </div>
             <div class="flex gap-1 flex-[2.8]">
                 <button onclick="quickAction('${p.id}', 'AN_SAM')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900/30 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Ăn sâm</button>
                 <button onclick="quickAction('${p.id}', 'CHAT_2')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-900/20 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Chặt 2</button>
                 <button onclick="quickAction('${p.id}', 'CHAT_SAM')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Bắt sâm</button>
-                <button onclick="quickAction('${p.id}', 'CHAY')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all ${score === -15 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30'} flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Cháy</button>
+                <button id="chay-btn-${p.id}" onclick="quickAction('${p.id}', 'CHAY')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all ${score === -15 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30'} flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Cháy</button>
             </div>
-            <input type="text" id="score-input-${idx}" inputmode="numeric" onkeydown="handleScoreKeyDown(event, ${idx})" oninput="handleScoreChange('${p.id}', this.value)" value="${score !== undefined ? score : ''}" class="w-14 h-11 text-center font-black rounded-xl border-2 outline-none text-sm transition-all flex-shrink-0 ${scoreClass}" placeholder="0">
+            <input type="text" id="score-input-${idx}" inputmode="numeric" onfocus="this.select()" onkeydown="handleScoreKeyDown(event, ${idx})" oninput="handleScoreChange('${p.id}', this.value, this)" value="${score !== undefined ? score : ''}" class="w-14 h-11 text-center font-black rounded-xl border-2 outline-none text-sm transition-all flex-shrink-0 ${scoreClass}" placeholder="0">
         </div>`;
     }).join('');
     lucide.createIcons();
-
-    if (activeId) {
-        const el = document.getElementById(activeId);
-        if (el) {
-            el.focus();
-            try {
-                if (selectionStart !== null && selectionEnd !== null) {
-                    el.setSelectionRange(selectionStart, selectionEnd);
-                }
-            } catch (e) {}
-        }
-    }
 }
 
 function renderChart() {
@@ -376,7 +397,7 @@ function renderChart() {
                     <div class="absolute flex flex-col items-center z-20" style="bottom: calc(${h}% + 8px)">
                         ${isTop ? crownIcon : ''}
                         ${isBottom && !isTop ? poopIcon : ''}
-                        <span class="text-[8px] font-bold text-slate-500 dark:text-slate-400 uppercase truncate max-w-[50px] mb-1 text-center leading-none">${p.name}</span>
+                        <span class="text-[10px] font-extrabold text-slate-600 dark:text-slate-300 uppercase truncate max-w-[58px] mb-1 text-center leading-tight tracking-tight">${p.name}</span>
                         <span class="text-[10px] font-black tabular-nums px-1.5 py-0.5 rounded-md shadow-sm border whitespace-nowrap ${p.total > 0 ? 'text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/40 border-indigo-100 dark:border-indigo-800' : 'text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700'}">${p.total}</span>
                     </div>
                     <div class="w-full max-w-[40px] rounded-t-lg bg-gradient-to-t ${isTop ? 'from-yellow-500 to-yellow-300' : 'from-indigo-600 dark:from-indigo-700 to-indigo-400 dark:to-indigo-500'} shadow-sm chart-bar-transition" style="height: ${h}%"></div>
@@ -387,7 +408,7 @@ function renderChart() {
                     <div class="w-full max-w-[40px] rounded-b-lg bg-gradient-to-b from-rose-500 dark:from-rose-600 to-rose-400 dark:to-rose-500 shadow-sm chart-bar-transition" style="height: ${h}%"></div>
                     <div class="absolute flex flex-col items-center z-20" style="top: calc(${h}% + 8px)">
                         <span class="text-[10px] font-black text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/40 border border-rose-100 dark:border-rose-800 px-1.5 py-0.5 rounded-md shadow-sm tabular-nums whitespace-nowrap mb-1">${p.total}</span>
-                        <span class="text-[8px] font-bold text-slate-500 dark:text-slate-400 uppercase truncate max-w-[50px] mb-1 text-center leading-none">${p.name}</span>
+                        <span class="text-[10px] font-extrabold text-slate-600 dark:text-slate-300 uppercase truncate max-w-[58px] mb-1 text-center leading-tight tracking-tight">${p.name}</span>
                         ${isBottom ? poopIcon.replace('mb-1', 'animate-pulse') : ''}
                     </div>
                 ` : ''}
