@@ -1,0 +1,8 @@
+{
+  "name": "than-sam",
+  "version": "1.0.0",
+  "description": "Thần Sâm - Web App ghi điểm bài Sâm",
+  "scripts": {
+    "dev": "npx -y serve ."
+  }
+}
