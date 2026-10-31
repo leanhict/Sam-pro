@@ -67,7 +67,7 @@ function addPlayer(e) {
     const input = document.getElementById('new-player-name');
     const name = input.value.trim();
     if (players.length >= 5) { 
-        showNotice("Tối đa 5 người thôi!", "warning"); 
+        showNotice(t('notice_max_players'), "warning"); 
         return; 
     }
     if (!name) return;
@@ -139,7 +139,7 @@ function handleScoreChange(id, val, inputEl) {
 function calculateTotalLeaves() {
     const missing = players.filter(p => currentScores[p.id] === undefined);
     if (missing.length > 1) { 
-        showNotice("Hãy nhập điểm cho người thua!", "warning"); 
+        showNotice(t('notice_missing_scores'), "warning"); 
         return; 
     }
     if (missing.length === 0) return;
@@ -154,14 +154,14 @@ function calculateTotalLeaves() {
         }
     });
     if (total === 0) { 
-        showNotice("Nhập lá phạt trước!", "warning"); 
+        showNotice(t('notice_enter_penalties'), "warning"); 
         return; 
     }
     currentScores[winnerId] = total;
     isTotalCalculated = true;
     renderPlayersList();
     updateSaveButton();
-    showNotice(`+${total} cho ${missing[0].name}`, "success");
+    showNotice(t('notice_winner_points', { total, name: missing[0].name }), "success");
 }
 
 function quickAction(id, type) {
@@ -172,17 +172,20 @@ function quickAction(id, type) {
         isTotalCalculated = true;
         renderPlayersList();
         updateSaveButton();
-        showNotice("Đã tính điểm Ăn Sâm", "success");
+        showNotice(t('notice_an_sam_calculated'), "success");
     } else if (type === 'CHAY') {
         currentScores[id] = -15;
         isTotalCalculated = false;
         renderPlayersList();
         updateSaveButton();
-        showNotice("Đã tính Cháy (-15 lá)", "success");
+        showNotice(t('notice_chay_calculated'), "success");
     } else {
         actionWinnerId = id;
         currentActionType = type;
-        document.getElementById('action-modal-title').innerText = type === 'CHAT_2' ? "Chặt 2 của ai?" : "Bắt sâm của ai?";
+        const modalTitle = document.getElementById('action-modal-title');
+        if (modalTitle) {
+            modalTitle.innerText = type === 'CHAT_2' ? t('modal_target_title_chat_2') : t('modal_target_title_chat_sam');
+        }
         renderActionTargetList();
         openModal('action-target-modal');
     }
@@ -205,27 +208,30 @@ function executeAction(loserId) {
     closeModal('action-target-modal');
     renderPlayersList();
     updateSaveButton();
-    showNotice(`Đã ghi nhận ${currentActionType === 'CHAT_2' ? 'Chặt 2' : 'Bắt Sâm'}!`, "success");
+    const actionLabel = currentActionType === 'CHAT_2' ? t('notice_action_chat_2') : t('notice_action_chat_sam');
+    showNotice(t('notice_action_recorded', { action: actionLabel }), "success");
 }
 
 function saveRound() {
     if (!isTotalCalculated) { 
-        showNotice("Hãy tính tổng lá trước!", "warning"); 
+        showNotice(t('notice_calc_first'), "warning"); 
         return; 
     }
+    const localeMap = { vi: 'vi-VN', ja: 'ja-JP', en: 'en-US' };
+    const locale = localeMap[getLanguage()] || 'en-US';
     const roundData = {
         id: editingRoundId || Date.now(),
-        timestamp: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }),
         scores: { ...currentScores }
     };
     if (editingRoundId) {
         const idx = rounds.findIndex(r => r.id === editingRoundId);
         if (idx !== -1) rounds[idx] = roundData;
         editingRoundId = null;
-        showNotice("Đã cập nhật ván chơi", "success");
+        showNotice(t('notice_round_updated'), "success");
     } else {
         rounds.push(roundData);
-        showNotice("Đã lưu ván mới", "success");
+        showNotice(t('notice_round_saved'), "success");
     }
     currentScores = {};
     isTotalCalculated = false;
@@ -240,7 +246,7 @@ function editRound(id) {
     isTotalCalculated = true;
     switchTab('active');
     renderAll();
-    showNotice("Đang sửa ván đấu...", "info");
+    showNotice(t('notice_editing_round'), "info");
 }
 
 function deleteRound(id) {
@@ -254,7 +260,7 @@ function deleteRound(id) {
         }
         sync();
         closeModal('delete-round-modal');
-        showNotice("Đã xóa ván chơi", "info");
+        showNotice(t('notice_round_deleted'), "info");
     };
     openModal('delete-round-modal');
 }
@@ -273,7 +279,8 @@ function resetGame() {
     currentScores = {}; 
     isTotalCalculated = false; 
     editingRoundId = null;
-    localStorage.clear();
+    localStorage.removeItem('thanSamPlayers');
+    localStorage.removeItem('thanSamRounds');
     closeModal('reset-modal');
     sync();
 }
@@ -314,14 +321,14 @@ function renderAll() {
     document.getElementById('setup-section').classList.toggle('hidden', players.length >= 5 || editingRoundId !== null);
     document.getElementById('chart-section').classList.toggle('hidden', players.length === 0);
     document.getElementById('scoring-section').classList.toggle('hidden', players.length === 0);
-    document.getElementById('round-count').innerText = `${rounds.length} ván`;
+    document.getElementById('round-count').innerText = `${rounds.length} ${t('rounds_unit')}`;
     if (editingRoundId) {
         const roundIdx = rounds.findIndex(r => r.id === editingRoundId);
-        document.getElementById('current-round-title').innerHTML = `<i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-500"></i> Sửa ván thứ ${roundIdx + 1}`;
-        document.getElementById('save-btn-text').innerText = "CẬP NHẬT ĐIỂM VÁN " + (roundIdx + 1);
+        document.getElementById('current-round-title').innerHTML = `<i data-lucide="edit-3" class="w-3.5 h-3.5 text-amber-500"></i> ${t('round_edit_prefix')} ${roundIdx + 1}`;
+        document.getElementById('save-btn-text').innerText = t('btn_update_round', { num: roundIdx + 1 });
     } else {
-        document.getElementById('current-round-title').innerHTML = `<i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500 fill-yellow-500"></i> Ván thứ ${rounds.length + 1}`;
-        document.getElementById('save-btn-text').innerText = "LƯU ĐIỂM VÁN " + (rounds.length + 1);
+        document.getElementById('current-round-title').innerHTML = `<i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500 fill-yellow-500"></i> ${t('round_prefix')} ${rounds.length + 1}`;
+        document.getElementById('save-btn-text').innerText = t('btn_save_round', { num: rounds.length + 1 });
     }
     renderPlayersList(); 
     renderChart(); 
@@ -352,10 +359,10 @@ function renderPlayersList() {
                 <span class="text-[12px] font-bold text-slate-700 dark:text-slate-200 truncate">${p.name}</span>
             </div>
             <div class="flex gap-1 flex-[2.8]">
-                <button onclick="quickAction('${p.id}', 'AN_SAM')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900/30 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Ăn sâm</button>
-                <button onclick="quickAction('${p.id}', 'CHAT_2')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-900/20 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Chặt 2</button>
-                <button onclick="quickAction('${p.id}', 'CHAT_SAM')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Bắt sâm</button>
-                <button id="chay-btn-${p.id}" onclick="quickAction('${p.id}', 'CHAY')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all ${score === -15 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30'} flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">Cháy</button>
+                <button onclick="quickAction('${p.id}', 'AN_SAM')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-300 border-indigo-100 dark:border-indigo-900/30 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">${t('btn_an_sam')}</button>
+                <button onclick="quickAction('${p.id}', 'CHAT_2')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 border-orange-100 dark:border-orange-900/20 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">${t('btn_chat_2')}</button>
+                <button onclick="quickAction('${p.id}', 'CHAT_SAM')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30 flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">${t('btn_chat_sam')}</button>
+                <button id="chay-btn-${p.id}" onclick="quickAction('${p.id}', 'CHAY')" class="h-10 flex-1 rounded-xl text-[8px] font-black uppercase border transition-all ${score === -15 ? 'bg-amber-500 text-white border-amber-600 shadow-sm' : 'bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/30'} flex items-center justify-center whitespace-nowrap px-0.5 active:scale-95">${t('btn_chay')}</button>
             </div>
             <input type="text" id="score-input-${idx}" inputmode="numeric" onfocus="this.select()" onkeydown="handleScoreKeyDown(event, ${idx})" oninput="handleScoreChange('${p.id}', this.value, this)" value="${score !== undefined ? score : ''}" class="w-14 h-11 text-center font-black rounded-xl border-2 outline-none text-sm transition-all flex-shrink-0 ${scoreClass}" placeholder="0">
         </div>`;
@@ -428,7 +435,7 @@ function renderHistory() {
         <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-50 dark:border-slate-800">
                 <div class="flex items-center gap-2">
-                    <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-md uppercase border border-indigo-100 dark:border-indigo-900/30">VÁN #${originalIdx + 1}</span>
+                    <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-md uppercase border border-indigo-100 dark:border-indigo-900/30">${t('history_round_tag', { num: originalIdx + 1 })}</span>
                     <span class="text-[9px] text-slate-400 dark:text-slate-500 font-black">${r.timestamp}</span>
                 </div>
                 <div class="flex gap-2">
@@ -445,7 +452,7 @@ function renderHistory() {
             </div>
         </div>`;
     }).join('');
-    if (!filtered.length) container.innerHTML = '<p class="text-center text-xs text-slate-400 dark:text-slate-600 py-10 font-bold uppercase tracking-widest text-[10px]">Trống...</p>';
+    if (!filtered.length) container.innerHTML = `<p class="text-center text-xs text-slate-400 dark:text-slate-600 py-10 font-bold uppercase tracking-widest text-[10px]">${t('history_empty')}</p>`;
     lucide.createIcons();
 }
 
@@ -455,7 +462,7 @@ function renderActionTargetList() {
     list.innerHTML = players.filter(p => p.id !== actionWinnerId).map(p => `
         <button onclick="executeAction('${p.id}')" class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-900/20 border border-slate-100 dark:border-slate-700 rounded-2xl group transition-all text-left">
             <span class="text-sm font-bold text-slate-700 dark:text-slate-200 group-hover:text-rose-600 dark:group-hover:text-rose-300 text-[13px]">${p.name}</span>
-            <span class="text-xs font-black text-rose-500 text-[11px]">-${points} điểm</span>
+            <span class="text-xs font-black text-rose-500 text-[11px]">-${points} ${t('pts_unit')}</span>
         </button>
     `).join('');
 }
@@ -470,6 +477,7 @@ function updateSaveButton() {
 
 // --- App Bootstrap ---
 window.onload = () => { 
+    initI18n();
     initTheme(); 
     lucide.createIcons(); 
     renderAll(); 

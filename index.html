@@ -33,11 +33,54 @@
                 <i data-lucide="flame" class="w-4 h-4"></i>
             </div>
             <div>
-                <h1 class="text-sm font-black tracking-tight leading-none uppercase text-slate-800 dark:text-slate-100">Thần <span class="text-indigo-600 dark:text-indigo-400">Sâm</span></h1>
+                <h1 id="app-title" data-i18n="app_name" class="text-sm font-black tracking-tight leading-none uppercase text-slate-800 dark:text-slate-100">Thần <span class="text-indigo-600 dark:text-indigo-400">Sâm</span></h1>
                 <p class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">Made by Le Anh</p>
             </div>
         </div>
-        <div class="flex gap-1.5">
+        <div class="flex gap-1.5 items-center">
+            <!-- Language Selector Dropdown -->
+            <div id="lang-container" class="relative">
+                <button onclick="toggleLangMenu(event)" id="lang-btn" aria-label="Language Selector" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 transition-all shadow-sm flex items-center justify-center">
+                    <i data-lucide="languages" class="w-3.5 h-3.5"></i>
+                </button>
+                <div id="lang-dropdown" class="hidden absolute right-0 mt-2 w-36 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 p-1.5 z-50 modal-animate-in">
+                    <button onclick="setLanguage('vi')" data-lang="vi" class="lang-item w-full flex items-center justify-between px-3 py-2 text-xs font-bold rounded-xl transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
+                        <span class="flex items-center gap-2.5">
+                            <svg class="w-5 h-3.5 rounded-[3px] border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex-shrink-0" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="30" height="20" fill="#da251d"/>
+                                <polygon points="15,4 16.35,8.15 20.71,8.15 17.18,10.71 18.53,14.85 15,12.29 11.47,14.85 12.82,10.71 9.29,8.15 13.65,8.15" fill="#FFFF00"/>
+                            </svg>
+                            <span>Tiếng Việt</span>
+                        </span>
+                        <i data-lucide="check" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 hidden checkmark"></i>
+                    </button>
+                    <button onclick="setLanguage('en')" data-lang="en" class="lang-item w-full flex items-center justify-between px-3 py-2 text-xs font-bold rounded-xl transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
+                        <span class="flex items-center gap-2.5">
+                            <svg class="w-5 h-3.5 rounded-[3px] border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex-shrink-0" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="60" height="40" fill="#012169"/>
+                                <path d="M0,0 L60,40 M60,0 L0,40" stroke="#ffffff" stroke-width="7"/>
+                                <path d="M0,0 L30,20 M60,40 L30,20" stroke="#C8102E" stroke-width="2.4"/>
+                                <path d="M60,0 L30,20 M0,40 L30,20" stroke="#C8102E" stroke-width="2.4"/>
+                                <path d="M30,0 v40 M0,20 h60" stroke="#ffffff" stroke-width="12"/>
+                                <path d="M30,0 v40 M0,20 h60" stroke="#C8102E" stroke-width="7.2"/>
+                            </svg>
+                            <span>English</span>
+                        </span>
+                        <i data-lucide="check" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 hidden checkmark"></i>
+                    </button>
+                    <button onclick="setLanguage('ja')" data-lang="ja" class="lang-item w-full flex items-center justify-between px-3 py-2 text-xs font-bold rounded-xl transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200">
+                        <span class="flex items-center gap-2.5">
+                            <svg class="w-5 h-3.5 rounded-[3px] border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex-shrink-0" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="30" height="20" fill="#ffffff"/>
+                                <circle cx="15" cy="10" r="6" fill="#bc002d"/>
+                            </svg>
+                            <span>日本語</span>
+                        </span>
+                        <i data-lucide="check" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 hidden checkmark"></i>
+                    </button>
+                </div>
+            </div>
+
             <button onclick="toggleTheme()" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 transition-all shadow-sm">
                 <i id="theme-icon" data-lucide="moon" class="w-3.5 h-3.5"></i>
             </button>
@@ -52,10 +95,10 @@
         <!-- Navigation -->
         <div class="flex bg-white dark:bg-slate-900 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <button onclick="switchTab('active')" id="tab-active" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[11px] font-bold transition-all duration-300 bg-indigo-600 text-white shadow-md">
-                <i data-lucide="plus" class="w-3.5 h-3.5"></i> <span class="uppercase tracking-widest font-black">Ghi Điểm</span>
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> <span data-i18n="tab_score" class="uppercase tracking-widest font-black">Ghi Điểm</span>
             </button>
             <button onclick="switchTab('history')" id="tab-history" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[11px] font-bold transition-all duration-300 text-slate-400 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800">
-                <i data-lucide="history" class="w-3.5 h-3.5"></i> <span class="uppercase tracking-widest font-black">Lịch Sử</span>
+                <i data-lucide="history" class="w-3.5 h-3.5"></i> <span data-i18n="tab_history" class="uppercase tracking-widest font-black">Lịch Sử</span>
             </button>
         </div>
 
@@ -64,8 +107,8 @@
             <!-- Form thêm người chơi -->
             <div id="setup-section" class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <form onsubmit="addPlayer(event)" class="flex gap-2">
-                    <input id="new-player-name" type="text" placeholder="Tên tay chơi mới..." class="flex-1 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-slate-800 dark:text-slate-100">
-                    <button type="submit" class="bg-indigo-600 dark:bg-indigo-500 text-white px-4 rounded-xl font-black text-[11px] uppercase shadow-md active:scale-95 text-[10px]">Thêm</button>
+                    <input id="new-player-name" type="text" data-i18n-placeholder="player_input_placeholder" placeholder="Tên tay chơi mới..." class="flex-1 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-slate-800 dark:text-slate-100">
+                    <button type="submit" data-i18n="btn_add_player" class="bg-indigo-600 dark:bg-indigo-500 text-white px-4 rounded-xl font-black text-[11px] uppercase shadow-md active:scale-95 text-[10px]">Thêm</button>
                 </form>
             </div>
 
@@ -74,7 +117,7 @@
                 <div class="flex justify-between items-center mb-14">
                     <div class="flex items-center gap-2">
                         <i data-lucide="trending-up" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
-                        <h2 class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-widest">Phong độ hiện tại</h2>
+                        <h2 data-i18n="standings_title" class="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-widest">Phong độ hiện tại</h2>
                     </div>
                     <span id="round-count" class="text-[10px] font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-full uppercase tracking-tighter">0 ván</span>
                 </div>
@@ -91,13 +134,13 @@
                         <i data-lucide="star" class="w-3.5 h-3.5 text-yellow-500 fill-yellow-500"></i> Ván đấu thứ 1
                     </h2>
                     <button onclick="openModal('clear-scores-modal')" class="flex items-center gap-1 text-[9px] font-black text-rose-500 bg-rose-50 dark:bg-rose-900/20 px-2 py-1 rounded-lg border border-rose-100 dark:border-rose-900/30 active:scale-95 transition-all">
-                        <i data-lucide="trash-2" class="w-2.5 h-2.5"></i> XÓA ĐIỂM
+                        <i data-lucide="trash-2" class="w-2.5 h-2.5"></i> <span data-i18n="btn_clear_scores">XÓA ĐIỂM</span>
                     </button>
                 </div>
                 <div class="p-4 space-y-2.5" id="players-list"></div>
                 <div class="p-4 pt-2 space-y-3">
                     <button onclick="calculateTotalLeaves()" class="w-full bg-emerald-50 dark:bg-emerald-900/10 text-emerald-700 dark:text-emerald-400 border-2 border-emerald-200 dark:border-emerald-900/30 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-sm active:scale-95 flex items-center justify-center gap-2">
-                        <i data-lucide="calculator" class="w-4 h-4"></i> TÍNH TỔNG LÁ CHO NGƯỜI THẮNG
+                        <i data-lucide="calculator" class="w-4 h-4"></i> <span data-i18n="btn_calc_winner">TÍNH TỔNG LÁ CHO NGƯỜI THẮNG</span>
                     </button>
                     <button onclick="saveRound()" id="save-round-btn" class="w-full bg-indigo-600 dark:bg-indigo-600 text-white py-4 rounded-2xl font-black active:scale-95 flex flex-col items-center justify-center gap-1 shadow-lg shadow-indigo-100 dark:shadow-none transition-all opacity-50 cursor-not-allowed btn-save-glow">
                         <i data-lucide="save" class="w-5 h-5"></i>
@@ -111,7 +154,7 @@
         <div id="view-history" class="hidden space-y-4">
             <div class="relative group">
                 <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 w-4 h-4"></i>
-                <input type="text" id="history-search" oninput="renderHistory()" placeholder="Tìm ván, điểm, tên..." class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-[13px] text-slate-800 dark:text-slate-100 text-[12px]">
+                <input type="text" id="history-search" oninput="renderHistory()" data-i18n-placeholder="history_search_placeholder" placeholder="Tìm ván, điểm, tên..." class="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none font-bold text-[13px] text-slate-800 dark:text-slate-100 text-[12px]">
             </div>
             <div id="history-list" class="space-y-3 pb-4"></div>
         </div>
@@ -121,11 +164,11 @@
     <div id="reset-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
         <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[32px] shadow-2xl p-8 border border-slate-100 dark:border-slate-800 text-center modal-animate-in">
             <div class="w-16 h-16 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="rotate-ccw" class="w-8 h-8"></i></div>
-            <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 mb-3 uppercase tracking-tight text-center">Xóa sạch trận chơi?</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-8 text-center text-[13px]">Dữ liệu sẽ bị xóa hoàn toàn khỏi thiết bị.</p>
+            <h3 data-i18n="modal_reset_title" class="text-lg font-black text-slate-800 dark:text-slate-100 mb-3 uppercase tracking-tight text-center">Xóa sạch trận chơi?</h3>
+            <p data-i18n="modal_reset_desc" class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-8 text-center text-[13px]">Dữ liệu sẽ bị xóa hoàn toàn khỏi thiết bị.</p>
             <div class="flex flex-col gap-3">
-                <button onclick="resetGame()" class="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-sm uppercase shadow-lg active:scale-95 text-[11px]">XÓA NGAY</button>
-                <button onclick="closeModal('reset-modal')" class="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl font-black text-sm uppercase text-[11px]">HỦY BỎ</button>
+                <button onclick="resetGame()" data-i18n="modal_reset_confirm" class="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-sm uppercase shadow-lg active:scale-95 text-[11px]">XÓA NGAY</button>
+                <button onclick="closeModal('reset-modal')" data-i18n="modal_reset_cancel" class="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl font-black text-sm uppercase text-[11px]">HỦY BỎ</button>
             </div>
         </div>
     </div>
@@ -133,10 +176,10 @@
     <div id="clear-scores-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
         <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[32px] shadow-2xl p-8 border border-slate-100 dark:border-slate-800 text-center modal-animate-in">
             <div class="w-16 h-16 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="trash-2" class="w-8 h-8"></i></div>
-            <h3 id="clear-modal-title" class="text-lg font-black text-slate-800 dark:text-slate-100 mb-3 uppercase tracking-tight text-center">Xóa điểm ván này?</h3>
+            <h3 id="clear-modal-title" data-i18n="modal_clear_title" class="text-lg font-black text-slate-800 dark:text-slate-100 mb-3 uppercase tracking-tight text-center">Xóa điểm ván này?</h3>
             <div class="flex flex-col gap-3">
-                <button onclick="confirmClearScores()" class="w-full py-4 bg-amber-500 text-white rounded-2xl font-black text-sm uppercase shadow-lg active:scale-95 text-[11px]">XÁC NHẬN</button>
-                <button onclick="closeModal('clear-scores-modal')" class="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl font-black text-sm uppercase text-[11px]">HỦY BỎ</button>
+                <button onclick="confirmClearScores()" data-i18n="modal_clear_confirm" class="w-full py-4 bg-amber-500 text-white rounded-2xl font-black text-sm uppercase shadow-lg active:scale-95 text-[11px]">XÁC NHẬN</button>
+                <button onclick="closeModal('clear-scores-modal')" data-i18n="modal_clear_cancel" class="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl font-black text-sm uppercase text-[11px]">HỦY BỎ</button>
             </div>
         </div>
     </div>
@@ -144,11 +187,11 @@
     <div id="delete-round-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
         <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[32px] shadow-2xl p-8 border border-slate-100 dark:border-slate-800 text-center modal-animate-in">
             <div class="w-16 h-16 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="trash-2" class="w-8 h-8"></i></div>
-            <h3 class="text-lg font-black text-slate-800 dark:text-slate-100 mb-3 uppercase tracking-tight text-center">Xóa ván chơi này?</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-8 text-center text-[13px]">Thao tác này không thể hoàn tác.</p>
+            <h3 data-i18n="modal_delete_title" class="text-lg font-black text-slate-800 dark:text-slate-100 mb-3 uppercase tracking-tight text-center">Xóa ván chơi này?</h3>
+            <p data-i18n="modal_delete_desc" class="text-sm text-slate-500 dark:text-slate-400 font-medium mb-8 text-center text-[13px]">Thao tác này không thể hoàn tác.</p>
             <div class="flex flex-col gap-3">
-                <button id="confirm-delete-round-btn" class="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-sm uppercase shadow-lg active:scale-95 text-[11px]">XÓA VÁN</button>
-                <button onclick="closeModal('delete-round-modal')" class="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl font-black text-sm uppercase text-[11px]">HỦY BỎ</button>
+                <button id="confirm-delete-round-btn" data-i18n="modal_delete_confirm" class="w-full py-4 bg-rose-500 text-white rounded-2xl font-black text-sm uppercase shadow-lg active:scale-95 text-[11px]">XÓA VÁN</button>
+                <button onclick="closeModal('delete-round-modal')" data-i18n="modal_delete_cancel" class="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl font-black text-sm uppercase text-[11px]">HỦY BỎ</button>
             </div>
         </div>
     </div>
@@ -169,12 +212,13 @@
     <footer class="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 py-3 px-6 flex justify-between items-center z-40 shadow-lg">
         <div class="flex items-center gap-2">
             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest uppercase">Thần Sâm Local Mode</span>
+            <span data-i18n="footer_local_mode" class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest uppercase">Thần Sâm Local Mode</span>
         </div>
         <div class="text-[9px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest flex items-center gap-2">Made by Le Anh <i data-lucide="chevron-right" class="w-2.5 h-2.5"></i></div>
     </footer>
 
-    <!-- Logic Script -->
+    <!-- Logic Scripts -->
+    <script src="i18n.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
