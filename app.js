@@ -217,7 +217,7 @@ function saveRound() {
         showNotice(t('notice_calc_first'), "warning"); 
         return; 
     }
-    const localeMap = { vi: 'vi-VN', ja: 'ja-JP', zh: 'zh-CN', en: 'en-US' };
+    const localeMap = { vi: 'vi-VN', ja: 'ja-JP', zh: 'zh-CN', de: 'de-DE', en: 'en-US' };
     const locale = localeMap[getLanguage()] || 'en-US';
     const roundData = {
         id: editingRoundId || Date.now(),

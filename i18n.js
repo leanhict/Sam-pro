@@ -238,6 +238,65 @@ const TRANSLATIONS = {
 
         // Footer & General
         footer_local_mode: "参牌大师 Local Mode"
+    },
+    de: {
+        app_name: 'Sam <span class="text-indigo-600 dark:text-indigo-400">Meister</span>',
+        app_credit: "Made by Le Anh",
+        tab_score: "Punkte",
+        tab_history: "Verlauf",
+        player_input_placeholder: "Neuer Spielername...",
+        btn_add_player: "Hinzufügen",
+        standings_title: "Aktuelle Rangliste",
+        rounds_unit: "Runden",
+        round_prefix: "Runde ",
+        round_edit_prefix: "Runde bearbeiten ",
+        btn_clear_scores: "PUNKTE LÖSCHEN",
+        btn_calc_winner: "PUNKTE FÜR GEWINNER BERECHNEN",
+        btn_save_round: "RUNDE {num} SPEICHERN",
+        btn_update_round: "RUNDE {num} AKTUALISIEREN",
+        btn_an_sam: "Sam-Sieg",
+        btn_chat_2: "2er-Stich",
+        btn_chat_sam: "Sam-Stopp",
+        btn_chay: "Verbrannt",
+        history_search_placeholder: "Runde, Punkte, Spieler suchen...",
+        history_round_tag: "RUNDE #{num}",
+        history_empty: "Keine Einträge...",
+
+        // Modals
+        modal_reset_title: "Spiel komplett zurücksetzen?",
+        modal_reset_desc: "Alle Daten werden dauerhaft von diesem Gerät gelöscht.",
+        modal_reset_confirm: "JETZT LÖSCHEN",
+        modal_reset_cancel: "ABBRECHEN",
+        modal_clear_title: "Punkte dieser Runde löschen?",
+        modal_clear_confirm: "BESTÄTIGEN",
+        modal_clear_cancel: "ABBRECHEN",
+        modal_delete_title: "Diese Runde löschen?",
+        modal_delete_desc: "Diese Aktion kann nicht rückgängig gemacht werden.",
+        modal_delete_confirm: "RUNDE LÖSCHEN",
+        modal_delete_cancel: "ABBRECHEN",
+        modal_target_title_chat_2: "Wessen 2 wurde geschlagen?",
+        modal_target_title_chat_sam: "Wessen Sam wurde gestoppt?",
+        modal_target_title_default: "Betroffener Spieler?",
+        pts_unit: "Pkt",
+
+        // Notices / Toasts
+        notice_max_players: "Maximal 5 Spieler erlaubt!",
+        notice_missing_scores: "Bitte Strafpunkte für die Verlierer eingeben!",
+        notice_enter_penalties: "Zuerst Strafpunkte eingeben!",
+        notice_winner_points: "+{total} Pkt für {name}",
+        notice_an_sam_calculated: "Sam-Sieg-Punkte berechnet",
+        notice_chay_calculated: "Verbrannt (-15 Karten) berechnet",
+        notice_action_chat_2: "2er-Stich",
+        notice_action_chat_sam: "Sam-Stopp",
+        notice_action_recorded: "{action} erfasst!",
+        notice_calc_first: "Bitte zuerst die Gesamtpunktzahl berechnen!",
+        notice_round_updated: "Runde erfolgreich aktualisiert",
+        notice_round_saved: "Neue Runde gespeichert",
+        notice_editing_round: "Runde wird bearbeitet...",
+        notice_round_deleted: "Runde gelöscht",
+
+        // Footer & General
+        footer_local_mode: "Sam Meister Local Mode"
     }
 };
 
@@ -257,6 +316,9 @@ function detectDefaultLanguage() {
     }
     if (browserLang.startsWith('zh')) {
         return 'zh';
+    }
+    if (browserLang.startsWith('de')) {
+        return 'de';
     }
     return 'en';
 }
