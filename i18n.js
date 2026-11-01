@@ -179,6 +179,65 @@ const TRANSLATIONS = {
 
         // Footer & General
         footer_local_mode: "サムマスター Local Mode"
+    },
+    zh: {
+        app_name: '参牌<span class="text-indigo-600 dark:text-indigo-400">大师</span>',
+        app_credit: "Made by Le Anh",
+        tab_score: "记分",
+        tab_history: "历史",
+        player_input_placeholder: "新玩家姓名...",
+        btn_add_player: "添加",
+        standings_title: "当前战绩",
+        rounds_unit: "局",
+        round_prefix: "回合 ",
+        round_edit_prefix: "编辑回合 ",
+        btn_clear_scores: "清空分数",
+        btn_calc_winner: "自动计算赢家总分",
+        btn_save_round: "保存第{num}局",
+        btn_update_round: "更新第{num}局",
+        btn_an_sam: "吃参",
+        btn_chat_2: "截杀2",
+        btn_chat_sam: "抓参",
+        btn_chay: "烧牌",
+        history_search_placeholder: "搜索局数、分数、玩家...",
+        history_round_tag: "第{num}局",
+        history_empty: "暂无数据...",
+
+        // Modals
+        modal_reset_title: "重置整场比赛？",
+        modal_reset_desc: "数据将从此设备中彻底清除。",
+        modal_reset_confirm: "立即清除",
+        modal_reset_cancel: "取消",
+        modal_clear_title: "清空本局分数？",
+        modal_clear_confirm: "确认",
+        modal_clear_cancel: "取消",
+        modal_delete_title: "删除此局？",
+        modal_delete_desc: "此操作无法撤销。",
+        modal_delete_confirm: "删除本局",
+        modal_delete_cancel: "取消",
+        modal_target_title_chat_2: "截杀了谁的2？",
+        modal_target_title_chat_sam: "抓了谁的参？",
+        modal_target_title_default: "被抓目标玩家",
+        pts_unit: "分",
+
+        // Notices / Toasts
+        notice_max_players: "最多只能添加5名玩家！",
+        notice_missing_scores: "请先输入输家的罚牌数！",
+        notice_enter_penalties: "请先输入罚牌张数！",
+        notice_winner_points: "{name} 获得 +{total} 分",
+        notice_an_sam_calculated: "已计算吃参获胜分数",
+        notice_chay_calculated: "已计算烧牌（-15张）",
+        notice_action_chat_2: "截杀2",
+        notice_action_chat_sam: "抓参",
+        notice_action_recorded: "已记录{action}！",
+        notice_calc_first: "请先自动计算总张数！",
+        notice_round_updated: "已更新本局数据",
+        notice_round_saved: "已保存新一局",
+        notice_editing_round: "正在编辑该局...",
+        notice_round_deleted: "已删除该局",
+
+        // Footer & General
+        footer_local_mode: "参牌大师 Local Mode"
     }
 };
 
@@ -195,6 +254,9 @@ function detectDefaultLanguage() {
     }
     if (browserLang.startsWith('ja')) {
         return 'ja';
+    }
+    if (browserLang.startsWith('zh')) {
+        return 'zh';
     }
     return 'en';
 }
